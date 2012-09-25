@@ -35,7 +35,7 @@ public:
   void remove_member(int rank_to_remove);
 
   bool receive_message(Message& msg_buffer);
-  CAPI_return_t send_message(int payload_byte, int message_signature_byte, int tag_buffer);
+  bool send_message(int payload_byte, int message_signature_byte, int tag_buffer);
 };
 
 #endif

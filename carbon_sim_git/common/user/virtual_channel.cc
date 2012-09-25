@@ -92,9 +92,13 @@ bool VirtualChannel::receive_message(Message& msg_buffer){
   return (found != 0) ? true : false;
 }
 
-CAPI_return_t VirtualChannel::send_message(int payload_byte, int message_signature_byte, int tag_buffer) {
+bool VirtualChannel::send_message(int payload_byte, int message_signature_byte, int tag_buffer) {
   int size_arg = sizeof(int);
   Message *msg = new Message(tag_buffer, size_arg, payload_byte, message_signature_byte, id, owner_tile_id);  
-  return CAPI_message_send_w_ex((CAPI_endpoint_t) owner_tile_id, (CAPI_endpoint_t) CAPI_ENDPOINT_ALL, (char *) msg, sizeof(Message), CARBON_NET_USER_1);
+  CAPI_return_t ret = CAPI_message_send_w_ex((CAPI_endpoint_t) owner_tile_id, (CAPI_endpoint_t) CAPI_ENDPOINT_ALL, (char *) msg, sizeof(Message), CARBON_NET_USER_1);
+  if(ret == 0) //Successful transfer.
+     return true;
+  else //Either core is not initialized or size of sent and msg are different.
+     return false; //ret == -1 if size mismatch. otherwise ret == CAPI_ReceiverNotInitialized.
 }
 
